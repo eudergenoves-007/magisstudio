@@ -1,0 +1,13 @@
+# Dependencias (Cualquier nivel)
+node_modules/
+**/node_modules/
+dist/
+build/
+.cache/
+temp_magis_backup/
+
+# Entorno y Secretos
+.env
+.env.*
+.DS_Store
+*.log
