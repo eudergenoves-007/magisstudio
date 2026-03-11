@@ -16,3 +16,4 @@ app.get('/', (req, res) => res.send('Magis Studio API Online'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Servidor en puerto ${PORT}`));
+module.exports = app;
