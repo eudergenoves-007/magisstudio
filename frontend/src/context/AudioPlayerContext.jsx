@@ -6,7 +6,7 @@ const MOCK_TRACKS = [
     id: '1',
     title: "Frecuencia Ámbar (Mutación)",
     artist: "Magis",
-    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1741634861/Frecuencia_Ambar_Magis_mp3_320.mp3",
+    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1773184871/magis_studio/laboratorio_sonoro/lylvg2ieqb2xl4ahrien.mp3",
     artwork: { url: "https://images.unsplash.com/photo-1614149162883-504ce4d13909?q=80&w=500&auto=format&fit=crop" },
     metadata: { bitDepth: 24, sampleRate: 48000 }
   },
@@ -14,7 +14,7 @@ const MOCK_TRACKS = [
     id: '2',
     title: "Falsa Simetría (Simulacro)",
     artist: "Magis",
-    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1741634861/Frecuencia_Ambar_Magis_mp3_320.mp3", // <-- Reemplaza este enlace luego con el real de Cloudinary
+    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1773184864/magis_studio/laboratorio_sonoro/jqberoeli8ke2rhzpksg.mp3",
     artwork: { url: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=500&auto=format&fit=crop" },
     metadata: { bitDepth: 24, sampleRate: 48000 }
   },
@@ -22,7 +22,7 @@ const MOCK_TRACKS = [
     id: '3',
     title: "Órbita Secreta (Gravedad)",
     artist: "Magis",
-    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1741634861/Frecuencia_Ambar_Magis_mp3_320.mp3", // <-- Reemplaza este enlace luego con el real de Cloudinary
+    streamUrl: "https://res.cloudinary.com/dilmwlnux/video/upload/v1773184858/magis_studio/laboratorio_sonoro/o5kwghpnhaetpgxbjnh8.mp3",
     artwork: { url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=500&auto=format&fit=crop" },
     metadata: { bitDepth: 24, sampleRate: 48000 }
   }
