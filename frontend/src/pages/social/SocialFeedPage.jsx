@@ -1,11 +1,11 @@
 // ─── magis-studio/frontend/src/pages/SocialFeedPage.jsx ──────────────────────
 import { useState, useRef, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useFeed, useStories } from '../hooks/useSocial';
-import PostCard from '../components/social/PostCard';
-import StoriesBar from '../components/social/StoriesBar';
-import CreatePostModal from '../components/social/CreatePostModal';
-import NotificationBell from '../components/social/NotificationBell';
+import { useAuth } from '../../context/AuthContext';
+import { useFeed, useStories } from '../../hooks/useSocial';
+import PostCard from '../../components/social/PostCard';
+import StoriesBar from '../../components/social/StoriesBar';
+import CreatePostModal from '../../components/social/CreatePostModal';
+// import NotificationBell from '../../components/social/NotificationBell';
 import './SocialFeedPage.css';
 
 export default function SocialFeedPage() {
@@ -46,7 +46,7 @@ export default function SocialFeedPage() {
           <p className="social-header__sub font-mono">La comunidad Magis</p>
         </div>
         <div className="social-header__actions">
-          <NotificationBell />
+          {/* <NotificationBell /> */}
           <button
             className="social-create-btn"
             onClick={() => setShowCreate(true)}
@@ -60,7 +60,7 @@ export default function SocialFeedPage() {
 
       {/* ── Stories bar ─────────────────────────────────────────────────── */}
       {storiesData && storiesData.length > 0 && (
-        <StoriesBar groups={storiesData} currentUser={user} />
+        <StoriesBar groups={storiesData} currentUser={user} /> */}
       )}
 
       {/* ── Feed ────────────────────────────────────────────────────────── */}
@@ -70,15 +70,15 @@ export default function SocialFeedPage() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="post-skeleton glass">
                 <div className="post-skeleton__header">
-                  <div className="skeleton post-skeleton__avatar" />
+                  <div className="skeleton post-skeleton__avatar" /> */}
                   <div className="post-skeleton__meta">
-                    <div className="skeleton post-skeleton__name" />
-                    <div className="skeleton post-skeleton__time" />
+                    <div className="skeleton post-skeleton__name" /> */}
+                    <div className="skeleton post-skeleton__time" /> */}
                   </div>
                 </div>
-                <div className="skeleton post-skeleton__image" />
+                <div className="skeleton post-skeleton__image" /> */}
                 <div className="post-skeleton__footer">
-                  <div className="skeleton post-skeleton__actions" />
+                  <div className="skeleton post-skeleton__actions" /> */}
                 </div>
               </div>
             ))}
@@ -104,15 +104,15 @@ export default function SocialFeedPage() {
         )}
 
         {allPosts.map((post) => (
-          <PostCard key={post._id} post={post} currentUser={user} />
+          <PostCard key={post._id} post={post} currentUser={user} /> */}
         ))}
 
         {/* Infinite scroll sentinel */}
-        <div ref={sentinelRef} className="social-feed__sentinel" aria-hidden="true" />
+        <div ref={sentinelRef} className="social-feed__sentinel" aria-hidden="true" /> */}
 
         {isFetchingNextPage && (
           <div className="social-feed__loading-more">
-            <div className="social-feed__spinner" aria-label="Cargando más..." />
+            <div className="social-feed__spinner" aria-label="Cargando más..." /> */}
           </div>
         )}
 
@@ -123,7 +123,7 @@ export default function SocialFeedPage() {
 
       {/* ── Create post modal ────────────────────────────────────────────── */}
       {showCreate && (
-        <CreatePostModal onClose={() => setShowCreate(false)} />
+        <CreatePostModal onClose={() => setShowCreate(false)} /> */}
       )}
     </div>
   );
