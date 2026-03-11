@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
 import { socialKeys } from '../../hooks/useSocial';
-import './StoriesBar.css';
+import './social.css';
 
 export default function StoriesBar({ groups, currentUser }) {
   const [active, setActive]       = useState(null); // { groupIdx, storyIdx }
@@ -122,4 +122,3 @@ export default function StoriesBar({ groups, currentUser }) {
     </>
   );
 }
-
