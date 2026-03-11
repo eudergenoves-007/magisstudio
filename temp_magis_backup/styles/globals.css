@@ -1,0 +1,336 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAGIS STUDIO — Global Design System
+   Glassmorphism × Neumorphism × Cinematographic Dark Palette
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@300;400&display=swap');
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────────── */
+:root {
+  /* ── Color Palette ─────────────────────────────────────────────────────────── */
+  --color-void:         #080810;   /* deepest background */
+  --color-obsidian:     #0d0d18;   /* base surface */
+  --color-midnight:     #11111f;   /* elevated surface */
+  --color-console:      #161628;   /* card/panel bg */
+  --color-slate:        #1e1e35;   /* hover state bg */
+  --color-mist:         #252540;   /* borders, dividers */
+
+  /* Accent — Amber/Gold (analog warmth) */
+  --color-amber:        #e8a842;
+  --color-amber-dim:    #c48a20;
+  --color-amber-glow:   rgba(232, 168, 66, 0.15);
+  --color-amber-glass:  rgba(232, 168, 66, 0.08);
+
+  /* Accent — Cyan (digital precision) */
+  --color-cyan:         #4ecdc4;
+  --color-cyan-dim:     #2eaaa1;
+  --color-cyan-glow:    rgba(78, 205, 196, 0.15);
+
+  /* Accent — Crimson (VU meter peak) */
+  --color-crimson:      #e84855;
+  --color-crimson-glow: rgba(232, 72, 85, 0.2);
+
+  /* Text hierarchy */
+  --text-primary:       rgba(255, 255, 255, 0.92);
+  --text-secondary:     rgba(255, 255, 255, 0.60);
+  --text-tertiary:      rgba(255, 255, 255, 0.35);
+  --text-accent:        var(--color-amber);
+
+  /* ── Glassmorphism Tokens ──────────────────────────────────────────────────── */
+  --glass-bg:           rgba(22, 22, 40, 0.55);
+  --glass-bg-heavy:     rgba(13, 13, 24, 0.75);
+  --glass-bg-light:     rgba(37, 37, 64, 0.35);
+  --glass-border:       rgba(255, 255, 255, 0.07);
+  --glass-border-amber: rgba(232, 168, 66, 0.20);
+  --glass-blur:         blur(20px) saturate(180%);
+  --glass-blur-heavy:   blur(40px) saturate(200%);
+  --glass-blur-light:   blur(10px) saturate(150%);
+
+  /* ── Neumorphism Tokens (for controls) ─────────────────────────────────────── */
+  /* Base: --color-console (#161628) */
+  --neu-bg:             #161628;
+  --neu-shadow-dark:    #0c0c1a;   /* darker shadow */
+  --neu-shadow-light:   #201e3a;   /* lighter highlight */
+  --neu-raised:         4px 4px 10px var(--neu-shadow-dark),
+                       -4px -4px 10px var(--neu-shadow-light);
+  --neu-raised-sm:      2px 2px 6px var(--neu-shadow-dark),
+                       -2px -2px 6px var(--neu-shadow-light);
+  --neu-inset:          inset 3px 3px 8px var(--neu-shadow-dark),
+                        inset -3px -3px 8px var(--neu-shadow-light);
+  --neu-inset-sm:       inset 2px 2px 5px var(--neu-shadow-dark),
+                        inset -2px -2px 5px var(--neu-shadow-light);
+  --neu-flat:           0 0 0 transparent;
+
+  /* ── Typography ────────────────────────────────────────────────────────────── */
+  --font-display:       'Playfair Display', Georgia, serif;
+  --font-body:          'DM Sans', system-ui, sans-serif;
+  --font-mono:          'DM Mono', 'Fira Code', monospace;
+
+  /* ── Spacing & Layout ──────────────────────────────────────────────────────── */
+  --nav-height:         64px;
+  --sidebar-width:      240px;
+  --player-height:      80px;
+  --content-max:        1440px;
+  --radius-sm:          6px;
+  --radius-md:          12px;
+  --radius-lg:          20px;
+  --radius-xl:          28px;
+  --radius-pill:        999px;
+
+  /* ── Transitions ───────────────────────────────────────────────────────────── */
+  --ease-smooth:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:        cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast:    150ms var(--ease-smooth);
+  --transition-mid:     300ms var(--ease-smooth);
+  --transition-slow:    600ms var(--ease-smooth);
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  /* Ambient background texture */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(232, 168, 66, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(78, 205, 196, 0.04) 0%, transparent 50%);
+}
+
+/* Subtle noise overlay for analog feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Glassmorphism Utility Classes ──────────────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-heavy {
+  background: var(--glass-bg-heavy);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-light {
+  background: var(--glass-bg-light);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-amber {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-amber);
+  box-shadow: 0 0 20px var(--color-amber-glow), inset 0 1px 0 rgba(232, 168, 66, 0.1);
+}
+
+/* ─── Neumorphism Utility Classes ────────────────────────────────────────────── */
+.neu-raised {
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised);
+}
+
+.neu-raised-sm {
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised-sm);
+}
+
+.neu-inset {
+  background: var(--neu-bg);
+  box-shadow: var(--neu-inset);
+}
+
+.neu-inset-sm {
+  background: var(--neu-bg);
+  box-shadow: var(--neu-inset-sm);
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.5rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+
+.font-display { font-family: var(--font-display); }
+.font-mono    { font-family: var(--font-mono); }
+
+.text-amber   { color: var(--color-amber); }
+.text-cyan    { color: var(--color-cyan); }
+.text-muted   { color: var(--text-secondary); }
+.text-faint   { color: var(--text-tertiary); }
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-void); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-mist);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-amber-dim); }
+
+/* ─── Selection ──────────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--color-amber-glow);
+  color: var(--color-amber);
+}
+
+/* ─── Focus ring ─────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Links ──────────────────────────────────────────────────────────────────── */
+a {
+  color: var(--color-amber);
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+a:hover { opacity: 0.8; }
+
+/* ─── Page layout ────────────────────────────────────────────────────────────── */
+.page-container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
+.main-content {
+  padding-top: var(--nav-height);
+  padding-bottom: calc(var(--player-height) + 16px);
+  flex: 1;
+}
+
+/* ─── Glow Effects ───────────────────────────────────────────────────────────── */
+.glow-amber {
+  box-shadow: 0 0 20px var(--color-amber-glow), 0 0 40px rgba(232, 168, 66, 0.08);
+}
+.glow-cyan {
+  box-shadow: 0 0 20px var(--color-cyan-glow), 0 0 40px rgba(78, 205, 196, 0.06);
+}
+.text-glow-amber {
+  text-shadow: 0 0 20px var(--color-amber), 0 0 40px rgba(232, 168, 66, 0.4);
+}
+
+/* ─── Divider ────────────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-mist) 30%, var(--color-mist) 70%, transparent);
+  margin: 24px 0;
+}
+
+/* ─── Badge ──────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+.badge-amber {
+  background: var(--color-amber-glass);
+  color: var(--color-amber);
+  border: 1px solid rgba(232, 168, 66, 0.25);
+}
+
+.badge-cyan {
+  background: rgba(78, 205, 196, 0.08);
+  color: var(--color-cyan);
+  border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+/* ─── VU Meter animation ─────────────────────────────────────────────────────── */
+@keyframes vu-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(0.6); }
+  50%       { opacity: 1.0; transform: scaleY(1.0); }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s var(--ease-smooth) both;
+}
+
+/* ─── Skeleton loader ────────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-console) 25%,
+    var(--color-slate) 50%,
+    var(--color-console) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 56px;
+    --player-height: 72px;
+  }
+}

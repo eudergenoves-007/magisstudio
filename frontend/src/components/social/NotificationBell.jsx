@@ -39,8 +39,6 @@ export default function NotificationBell() {
 
   return (
     <div className="notif-bell" aria-haspopup="listbox" aria-expanded={open}>
-
-      {/* ── Bell button ───────────────────────────────────────────────── */}
       <button
         className="notif-bell__btn player__btn"
         onClick={handleOpen}
@@ -54,11 +52,9 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* ── Dropdown ─────────────────────────────────────────────────── */}
       {open && (
         <>
           <div className="notif-bell__dropdown glass-heavy" role="listbox" aria-label="Notificaciones">
-
             <div className="notif-bell__header">
               <span className="notif-bell__title font-mono">◈ NOTIFICACIONES</span>
               {unread > 0 && (
@@ -67,7 +63,6 @@ export default function NotificationBell() {
                 </span>
               )}
             </div>
-
             <div className="notif-bell__list">
               {notifications.length === 0 ? (
                 <div className="notif-bell__empty">
@@ -80,66 +75,35 @@ export default function NotificationBell() {
                 ))
               )}
             </div>
-
-            {notifications.length > 0 && (
-              <div className="notif-bell__footer">
-                <Link
-                  to="/notificaciones"
-                  className="notif-bell__see-all font-mono"
-                  onClick={() => setOpen(false)}
-                >
-                  Ver todas →
-                </Link>
-              </div>
-            )}
           </div>
-
-          {/* Click-outside backdrop */}
-          <div
-            className="notif-bell__overlay"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
+          <div className="notif-bell__overlay" onClick={() => setOpen(false)} aria-hidden="true" />
         </>
       )}
     </div>
   );
 }
 
-// ── Single notification row ───────────────────────────────────────────────────
 function NotifItem({ notif, onClose }) {
   const href = resolveLink(notif);
-
   const content = (
     <div className={`notif-item ${!notif.isRead ? 'is-unread' : ''}`} role="option">
-      {/* Sender avatar */}
       <div className="notif-item__avatar">
         {notif.sender?.avatar?.url
           ? <img src={notif.sender.avatar.url} alt={notif.sender.username} />
           : <span>{notif.sender?.username?.[0]?.toUpperCase() ?? '?'}</span>
         }
-        <span className="notif-item__type-icon" aria-hidden="true">
-          {NOTIF_ICONS[notif.type] ?? '◎'}
-        </span>
+        <span className="notif-item__type-icon" aria-hidden="true">{NOTIF_ICONS[notif.type] ?? '◎'}</span>
       </div>
-
-      {/* Body */}
       <div className="notif-item__body">
         <p className="notif-item__msg">{notif.message}</p>
         <span className="notif-item__time font-mono">{timeAgo(notif.createdAt)}</span>
       </div>
-
-      {/* Unread dot */}
       {!notif.isRead && <span className="notif-item__dot" aria-hidden="true" />}
     </div>
   );
-
-  return href
-    ? <Link to={href} onClick={onClose} style={{ textDecoration: 'none' }}>{content}</Link>
-    : content;
+  return href ? <Link to={href} onClick={onClose} style={{ textDecoration: 'none' }}>{content}</Link> : content;
 }
 
-// Resolve deep-link from notification entity
 function resolveLink(notif) {
   if (!notif.entity) return null;
   if (notif.entity.kind === 'Post')    return `/social/${notif.entity.id}`;
@@ -147,10 +111,8 @@ function resolveLink(notif) {
   return null;
 }
 
-// ── Icon ──────────────────────────────────────────────────────────────────────
 const BellIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </svg>
 );
