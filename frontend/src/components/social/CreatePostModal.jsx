@@ -1,7 +1,7 @@
 // ─── magis-studio/frontend/src/components/social/CreatePostModal.jsx ─────────
 import { useState, useRef } from 'react';
 import { useCreatePost } from '../../hooks/useSocial';
-import './CreatePostModal.css';
+import './social.css';
 
 const MAX_FILES = 10;
 const ACCEPTED  = 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm';

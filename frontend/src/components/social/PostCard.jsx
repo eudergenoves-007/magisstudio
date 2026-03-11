@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useReactToPost, useAddComment, useToggleSave, useDeletePost } from '../../hooks/useSocial';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
-import './PostCard.css';
+import './social.css';
 
 const REACTIONS = [
   { type: 'like',     emoji: '♥',  label: 'Me gusta'  },
