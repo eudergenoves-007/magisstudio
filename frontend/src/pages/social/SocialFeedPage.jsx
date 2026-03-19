@@ -31,7 +31,14 @@ export default function SocialFeedPage() {
           {isLoading ? (
             <p className="loading-text">Sintonizando el feed...</p>
           ) : (
-            feed?.pages?.flatMap(page => page.data).map(post => <PostCard key={post._id} post={post} />)
+            feed?.pages?.[0]?.data?.length > 0 ? (
+              feed.pages.flatMap(page => page.data || []).map(post => <PostCard key={post._id} post={post} />)
+            ) : (
+              <div className="social-feed__empty glass">
+                <h3 className="text-amber">No hay publicaciones</h3>
+                <p>Sé el primero en compartir algo con la comunidad.</p>
+              </div>
+            )
           )}
         </div>
       </main>

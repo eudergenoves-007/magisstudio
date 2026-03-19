@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { to: '/gear',        label: 'Gear Vault',  tag: 'Catálogo' },
   { to: '/laboratorio', label: 'Laboratorio', tag: 'Sonoro'   },
   { to: '/descargas',   label: 'Bóveda',      tag: 'Descargas'},
+  { to: '/social',      label: 'Red Social',  tag: 'Comunidad'},
 ];
 
 export default function Navbar() {

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 
+import { Navigate } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import HomePage from './pages/HomePage';
 import GearVaultPage from './pages/GearVaultPage';
@@ -18,7 +19,16 @@ import SocialFeedPage from './pages/social/SocialFeedPage';
 import { AudioPlayerProvider } from './context/AudioPlayerContext';
 import { AuthProvider } from './context/AuthContext';
 
+import { useAuth } from './context/AuthContext';
+
 import './styles/globals.css';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div>Cargando...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +54,11 @@ export default function App() {
                 <Route path="descargas" element={<BovedaDescargasPage />} />
                 
                 {/* 🚀 Nueva Ruta Social */}
-                <Route path="social" element={<SocialFeedPage />} />
+                <Route path="social" element={
+                  <ProtectedRoute>
+                    <SocialFeedPage />
+                  </ProtectedRoute>
+                } />
                 
                 <Route path="login" element={<LoginPage />} />
                 <Route path="registro" element={<RegisterPage />} />
