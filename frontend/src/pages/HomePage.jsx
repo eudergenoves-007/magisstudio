@@ -15,7 +15,7 @@ const DEMO_TRACK = {
   title: 'Frecuencia Ámbar',
   artist: 'Magis',
   artwork: null,
-  files: { mp3_320: { url: 'https://res.cloudinary.com/dilmwlnux/video/upload/v1773184864/magis_studio/laboratorio_sonoro/jqberoeli8ke2rhzpksg.mp3' } },
+  files: { mp3_320: { url: 'https://res.cloudinary.com/dilmwlnux/video/upload/v1773951039/magis_studio/frecuencia_ambar_v2_final.mp3' } },
   metadata: { bitDepth: 24, sampleRate: 96000, durationSeconds: 240 },
   accessLevel: 'public',
 };
