@@ -1,177 +1,145 @@
-// ─── magis-studio/frontend/src/hooks/useSocial.js ────────────────────────────
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import api from '../services/api';
 import toast from 'react-hot-toast';
+
+// ── Mock Initial Data ────────────────────────────────────────────────────────
+const MOCK_STORAGE_KEY = 'magis_mock_posts';
+
+const getMockData = () => {
+  const stored = localStorage.getItem(MOCK_STORAGE_KEY);
+  if (stored) return JSON.parse(stored);
+
+  // Initial dummy data
+  const initialPosts = [
+    {
+      _id: 'post1',
+      author: { _id: 'a1', username: 'AudioGuru', avatar: { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guru' } },
+      caption: '¡Probando la nueva interfaz de Magis Studio! Qué elegante se ve este feed. #glassmorphism',
+      media: [],
+      createdAt: new Date().toISOString(),
+      reactionCount: 5,
+      viewerReaction: null,
+      comments: []
+    },
+    {
+      _id: 'post2',
+      author: { _id: 'a2', username: 'BeatMaker99', avatar: { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Beat' } },
+      caption: 'Miren este hermoso hardware que acabo de conseguir.',
+      media: [{ type: 'image', url: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800' }],
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      reactionCount: 20,
+      viewerReaction: 'like',
+      comments: []
+    }
+  ];
+
+  localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(initialPosts));
+  return initialPosts;
+};
+
+// Helper for simulating async API calls
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 // ── Keys ──────────────────────────────────────────────────────────────────────
 export const socialKeys = {
-  feed:          (page) => ['social', 'feed', page],
   feedInfinite:  ()     => ['social', 'feed', 'infinite'],
   stories:       ()     => ['social', 'stories'],
   post:          (id)   => ['social', 'post', id],
-  userPosts:     (id)   => ['social', 'userPosts', id],
-  explore:       (q)    => ['social', 'explore', q],
   notifications: ()     => ['social', 'notifications'],
-  followers:     (id)   => ['social', 'followers', id],
-  following:     (id)   => ['social', 'following', id],
 };
 
-// ── Feed (infinite scroll) ────────────────────────────────────────────────────
+// ── Feed (infinite scroll mock) ──────────────────────────────────────────────
 export const useFeed = () =>
   useInfiniteQuery({
     queryKey: socialKeys.feedInfinite(),
-    queryFn: ({ pageParam = 1 }) =>
-      api.get(`/social/feed?page=${pageParam}&limit=12`).then(r => r.data),
+    queryFn: async ({ pageParam = 1 }) => {
+      await delay(500);
+      const posts = getMockData();
+      // Simple pagination: just return all posts on page 1, empty on others
+      if (pageParam === 1) {
+        return { data: posts, pagination: { hasMore: false, page: 1 } };
+      }
+      return { data: [], pagination: { hasMore: false, page: pageParam } };
+    },
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasMore ? lastPage.pagination.page + 1 : undefined,
     staleTime: 1000 * 60 * 2,
   });
 
-// ── Stories ───────────────────────────────────────────────────────────────────
+// ── Stories (mock empty) ─────────────────────────────────────────────────────
 export const useStories = () =>
   useQuery({
     queryKey: socialKeys.stories(),
-    queryFn: () => api.get('/social/stories').then(r => r.data.data),
+    queryFn: async () => {
+      await delay(300);
+      return []; // empty groups for now
+    },
     staleTime: 1000 * 60,
   });
 
-// ── Single post ───────────────────────────────────────────────────────────────
-export const usePost = (id) =>
-  useQuery({
-    queryKey: socialKeys.post(id),
-    queryFn: () => api.get(`/social/posts/${id}`).then(r => r.data.data),
-    enabled: !!id,
-  });
-
-// ── User posts ────────────────────────────────────────────────────────────────
-export const useUserPosts = (userId) =>
-  useQuery({
-    queryKey: socialKeys.userPosts(userId),
-    queryFn: () => api.get(`/social/users/${userId}/posts`).then(r => r.data.data),
-    enabled: !!userId,
-  });
-
-// ── Explore ───────────────────────────────────────────────────────────────────
-export const useExplore = (query = '') =>
-  useQuery({
-    queryKey: socialKeys.explore(query),
-    queryFn: () => api.get(`/social/explore${query ? `?q=${query}` : ''}`).then(r => r.data.data),
-    staleTime: 1000 * 30,
-  });
-
-// ── Notifications ─────────────────────────────────────────────────────────────
 export const useNotifications = () =>
   useQuery({
     queryKey: socialKeys.notifications(),
-    queryFn: () => api.get('/social/notifications').then(r => r.data),
-    refetchInterval: 1000 * 30, // Poll every 30s
+    queryFn: async () => ({ data: [], unreadCount: 0 }),
+    staleTime: 1000 * 60,
   });
 
-// ── Create post ───────────────────────────────────────────────────────────────
+// ── Create post (mock + local storage) ────────────────────────────────────────
 export const useCreatePost = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (formData) => api.post('/social/posts', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    mutationFn: async (data) => {
+      await delay(1000);
+
+      const newPost = {
+        _id: 'post_' + Date.now(),
+        author: JSON.parse(localStorage.getItem('magis_mock_user') || '{}'),
+        caption: data.get('caption'),
+        media: JSON.parse(data.get('mockMedia') || '[]'),
+        createdAt: new Date().toISOString(),
+        reactionCount: 0,
+        viewerReaction: null,
+        comments: []
+      };
+
+      const current = getMockData();
+      const updated = [newPost, ...current];
+      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(updated));
+
+      return { data: newPost };
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: socialKeys.feedInfinite() });
       toast.success('Publicación creada');
     },
-    onError: (err) => toast.error(err.response?.data?.message || 'Error al publicar'),
+    onError: () => toast.error('Error al publicar'),
   });
 };
 
-// ── Delete post ───────────────────────────────────────────────────────────────
-export const useDeletePost = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id) => api.delete(`/social/posts/${id}`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: socialKeys.feedInfinite() });
-      toast.success('Publicación eliminada');
-    },
-  });
-};
-
-// ── React to post ─────────────────────────────────────────────────────────────
 export const useReactToPost = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ postId, type = 'like' }) =>
-      api.post(`/social/posts/${postId}/react`, { type }),
-    onMutate: async ({ postId, type }) => {
-      // Optimistic update
-      await qc.cancelQueries({ queryKey: socialKeys.feedInfinite() });
-      const prev = qc.getQueryData(socialKeys.feedInfinite());
-      qc.setQueryData(socialKeys.feedInfinite(), (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map(page => ({
-            ...page,
-            data: page.data.map(post =>
-              post._id === postId
-                ? { ...post, reactionCount: (post.reactionCount || 0) + 1, viewerReaction: type }
-                : post
-            ),
-          })),
-        };
-      });
-      return { prev };
+    mutationFn: async ({ postId, type = 'like' }) => {
+        await delay(200);
+        const posts = getMockData();
+        const updated = posts.map(p => {
+            if(p._id === postId) {
+                // simple toggle mock
+                const isLiking = p.viewerReaction !== type;
+                return {
+                    ...p,
+                    viewerReaction: isLiking ? type : null,
+                    reactionCount: p.reactionCount + (isLiking ? 1 : -1)
+                };
+            }
+            return p;
+        });
+        localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(updated));
     },
-    onError: (err, _, ctx) => { if (ctx?.prev) qc.setQueryData(socialKeys.feedInfinite(), ctx.prev); },
-    onSettled: () => qc.invalidateQueries({ queryKey: socialKeys.feedInfinite() }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: socialKeys.feedInfinite() })
   });
 };
 
-// ── Add comment ───────────────────────────────────────────────────────────────
-export const useAddComment = (postId) => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => api.post(`/social/posts/${postId}/comments`, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: socialKeys.post(postId) }),
-    onError: (err) => toast.error(err.response?.data?.message || 'Error al comentar'),
-  });
-};
-
-// ── Toggle save ───────────────────────────────────────────────────────────────
-export const useToggleSave = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (postId) => api.post(`/social/posts/${postId}/save`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: socialKeys.feedInfinite() }),
-  });
-};
-
-// ── Follow / unfollow ─────────────────────────────────────────────────────────
-export const useFollowUser = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (userId) => api.post(`/social/users/${userId}/follow`),
-    onSuccess: (_, userId) => {
-      qc.invalidateQueries({ queryKey: socialKeys.followers(userId) });
-      toast.success('Siguiendo');
-    },
-  });
-};
-
-export const useUnfollowUser = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (userId) => api.delete(`/social/users/${userId}/follow`),
-    onSuccess: (_, userId) => {
-      qc.invalidateQueries({ queryKey: socialKeys.followers(userId) });
-      toast.success('Dejaste de seguir');
-    },
-  });
-};
-
-// ── Mark notifications read ───────────────────────────────────────────────────
-export const useMarkNotificationsRead = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: () => api.patch('/social/notifications/read-all'),
-    onSuccess: () => qc.invalidateQueries({ queryKey: socialKeys.notifications() }),
-  });
-};
+export const useDeletePost = () => { return { mutate: () => {} } };
+export const useAddComment = () => { return { mutate: () => {} } };
+export const useToggleSave = () => { return { mutate: () => {} } };
+export const useMarkNotificationsRead = () => { return { mutate: () => {} } };

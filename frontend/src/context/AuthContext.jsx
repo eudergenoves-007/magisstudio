@@ -1,58 +1,65 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
 
 const AuthContext = createContext(null);
 
-const TOKEN_KEY = 'magis_access_token';
-const REFRESH_KEY = 'magis_refresh_token';
+const USER_KEY = 'magis_mock_user';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      api.get('/auth/me')
-        .then((res) => setUser(res.data.data))
-        .catch(() => {
-          localStorage.removeItem(TOKEN_KEY);
-          localStorage.removeItem(REFRESH_KEY);
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+    // Attempt to read the mock user from localStorage on load
+    const storedUser = localStorage.getItem(USER_KEY);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    const { user: userData, accessToken, refreshToken } = res.data.data;
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-    localStorage.setItem(TOKEN_KEY, accessToken);
-    localStorage.setItem(REFRESH_KEY, refreshToken);
-    api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    // In our Mock, we allow any login if email and password are provided.
+    // Real validation is skipped for this frontend-only demo.
+    if (!email || !password) throw new Error('Credenciales faltantes');
+
+    const userData = {
+      _id: 'mock_' + Date.now().toString(),
+      username: email.split('@')[0],
+      email: email,
+      role: 'admin',
+      avatar: { url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}` }
+    };
+
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
     setUser(userData);
     return userData;
   }, []);
 
   const register = useCallback(async (username, email, password) => {
-    const res = await api.post('/auth/register', { username, email, password });
-    const { user: userData, accessToken, refreshToken } = res.data.data;
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-    localStorage.setItem(TOKEN_KEY, accessToken);
-    localStorage.setItem(REFRESH_KEY, refreshToken);
-    api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    if (!username || !email || !password) throw new Error('Campos incompletos');
+
+    const userData = {
+      _id: 'mock_' + Date.now().toString(),
+      username: username,
+      email: email,
+      role: 'contributor',
+      avatar: { url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}` }
+    };
+
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
     setUser(userData);
     return userData;
   }, []);
 
   const logout = useCallback(async () => {
-    try { await api.post('/auth/logout'); } catch {}
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_KEY);
-    delete api.defaults.headers.common['Authorization'];
+    await new Promise(resolve => setTimeout(resolve, 400));
+    localStorage.removeItem(USER_KEY);
     setUser(null);
   }, []);
 

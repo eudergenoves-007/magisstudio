@@ -38,20 +38,59 @@ export default function CreatePostModal({ onClose }) {
     addFiles(e.dataTransfer.files);
   };
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!caption.trim() && files.length === 0) return;
+
+    setIsUploading(true);
+    const uploadedMedia = [];
+
+    try {
+      // Unsigned Upload to Cloudinary for each file
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+      if (cloudName && uploadPreset) {
+        for (const fileObj of files) {
+          const formData = new FormData();
+          formData.append('file', fileObj);
+          formData.append('upload_preset', uploadPreset);
+
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+            method: 'POST',
+            body: formData
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            uploadedMedia.push({
+              url: data.secure_url,
+              type: data.resource_type === 'video' ? 'video' : 'image',
+              publicId: data.public_id
+            });
+          }
+        }
+      }
+    } catch(err) {
+       console.error("Error uploading to cloudinary", err);
+    } finally {
+      setIsUploading(false);
+    }
 
     const fd = new FormData();
     fd.append('caption', caption);
     fd.append('type', type);
     fd.append('visibility', visibility);
     fd.append('commentsEnabled', String(commentsOn));
-    files.forEach(f => fd.append('media', f));
+    fd.append('mockMedia', JSON.stringify(uploadedMedia)); // Enviar la multimedia procesada al mock
 
     await createMutation.mutateAsync(fd);
     onClose();
   };
+
+  const isPending = createMutation.isPending || isUploading;
 
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Nueva publicación">
@@ -166,13 +205,13 @@ export default function CreatePostModal({ onClose }) {
           {/* Footer */}
           <div className="create-modal__footer">
             <button type="button" className="create-modal__btn create-modal__btn--ghost"
-              onClick={onClose}>Cancelar</button>
+              onClick={onClose} disabled={isPending}>Cancelar</button>
             <button
               type="submit"
               className="create-modal__btn create-modal__btn--primary"
-              disabled={createMutation.isPending || (!caption.trim() && files.length === 0)}
+              disabled={isPending || (!caption.trim() && files.length === 0)}
             >
-              {createMutation.isPending ? 'Publicando...' : 'Publicar'}
+              {isUploading ? 'Subiendo multimedia...' : createMutation.isPending ? 'Publicando...' : 'Publicar'}
             </button>
           </div>
         </form>
