@@ -31,7 +31,7 @@ export default function SocialFeedPage() {
           {isLoading ? (
             <p className="loading-text">Sintonizando el feed...</p>
           ) : (
-            feed?.map(post => <PostCard key={post._id} post={post} />)
+            feed?.pages?.flatMap(page => page.data).map(post => <PostCard key={post._id} post={post} />)
           )}
         </div>
       </main>

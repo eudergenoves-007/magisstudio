@@ -1,12 +1,24 @@
+import jwt from 'jsonwebtoken';
+import User from '../models/User.model.js';
+
 export const protect = async (req, res, next) => {
-  // MOCK: Simulamos que el usuario "Andrés" está logueado para poder probar
-  // Cuando conectemos el Login real, cambiaremos esto por verificación JWT.
-  req.user = { 
-    _id: '65e0a0b9f0a2d3e4c5b6a789', // ID falso de MongoDB
-    username: 'Andres_Magis',
-    role: 'admin'
-  };
-  next();
+  let token;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'No autorizado para acceder a esta ruta' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    req.user = await User.findById(decoded.id);
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'No autorizado, token falló' });
+  }
 };
 
 export const requireRole = (...roles) => {
